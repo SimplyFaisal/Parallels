@@ -7,12 +7,12 @@
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 		<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
 		<script type="text/javascript" src="{{ url_for('static', filename='main.js')}}"></script>
-	<body onload="">
-		<div class="container">
-			<div class="page-header">
-				<h1 class="text-center">Parallels <small>yik yak sentiment analysis visualization</small></h1>
+		<body onload="">
+			<div class="container-fluid">
+				<div class="page-header">
+					<h1 class="text-center">Parallels <small> real time yik yak sentiment visualization</small></h1>
+				</div>
 			</div>
-		</div>
-		{% block index %}{% endblock %}
-	</body>
-</html>
+			{% block index %}{% endblock %}
+		</body>
+	</html>

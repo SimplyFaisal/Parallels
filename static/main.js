@@ -7,15 +7,22 @@ function graph() {
     var w = window.innerWidth - m[1] - m[3];
     var h = window.innerHeight - m[0] - m[2];
 
+    // Scales
     var x = d3.scale.ordinal().domain(sentiments).rangePoints([0, w]);
     var y = {};
+    var stroke = d3.scale.category20c();
 
     
     var line = d3.svg.line();
     var axis = d3.svg.axis().orient("left");
     var foreground;
 
-    var svg = d3.select("#chart").append("svg:svg")
+    // Clear the chart
+    d3.select("svg")
+       .remove();
+
+    var svg = d3.select("#chart")
+        .append("svg:svg")
         .attr("width", w + m[1] + m[3])
         .attr("height", h + m[0] + m[2])
         .append("svg:g")
@@ -33,16 +40,11 @@ function graph() {
         sentiments.forEach(function(d) {
             y[d] = d3.scale.linear().domain(d3.extent(data, function(p) {
                     return p[d];
-                })).range([h, 0]);
+                })).range([h, -1]);
 
             y[d].brush = d3.svg.brush().y(y[d]).on("brush", brush);
         });
 
-        var strokeScale = d3.scale.linear()
-            .domain([0, d3.max(data, function(d) {
-                return d.compound;
-            })])
-            .range([100, 800]);
 
         foreground = svg.append("svg:g")
             .attr("class", "foreground")
@@ -51,7 +53,37 @@ function graph() {
             .enter().append("svg:path")
             .attr("d", path)
             .attr('stroke', function(d) {
-                return '#200';
+                return  stroke(d.compound);
+            })
+            .on('mouseover', function(d) {
+                d3.select(this)
+                    .attr('stroke', 'blue');
+                
+                var mouse = {
+                    x : d3.mouse(this)[0],
+                    y : d3.mouse(this)[1]
+                };
+
+                // Make the tooltip visible
+                 var tooltip = d3.select('#tooltip')
+                    .style('left', mouse.x + 'px')
+                    .style('top', mouse.y + 50 + 'px');
+
+                // Add the message and meta data
+                tooltip.select('#message').text(d.message);
+                tooltip.select('#positive').text('Positive: ' + d.positive);
+                tooltip.select('#neutral').text('Neutral: ' + d.neutral);
+                tooltip.select('#negative').text('Negative: ' + d.negative);
+
+                d3.select('#tooltip').classed('hidden', false);
+            })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .attr('stroke', function(d) {
+                        return stroke(d.compound);
+                    });
+                 d3.select('#tooltip').clased('hidden', true);
+
             });
             
 
